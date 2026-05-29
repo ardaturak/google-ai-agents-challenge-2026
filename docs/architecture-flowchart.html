@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRONUVE Water Intelligence — Architecture & Project Overview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #0f172a; 
+            color: #e2e8f0;
+            padding: 30px;
+        }
+        .page { max-width: 1200px; margin: 0 auto; }
+        
+        h1 { color: #3b82f6; font-size: 28px; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
+        
+        h2 { color: #22c55e; font-size: 20px; margin: 30px 0 15px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
+        h3 { color: #f59e0b; font-size: 16px; margin: 20px 0 10px; }
+        
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 30px; }
+        .kpi-card { background: #1e293b; border-radius: 8px; padding: 15px; text-align: center; border: 1px solid #334155; }
+        .kpi-value { font-size: 24px; font-weight: 700; color: #3b82f6; }
+        .kpi-label { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+        
+        .flowchart { background: #1e293b; border-radius: 12px; padding: 30px; margin: 20px 0; border: 1px solid #334155; }
+        
+        .flow-row { display: flex; align-items: center; justify-content: center; margin: 8px 0; gap: 10px; flex-wrap: wrap; }
+        .flow-arrow { color: #4ade80; font-size: 20px; }
+        .flow-arrow-down { text-align: center; color: #4ade80; font-size: 18px; margin: 5px 0; }
+        
+        .agent-box { 
+            padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; 
+            display: inline-block; min-width: 140px; text-align: center;
+        }
+        .agent-root { background: #1e3a5f; border: 2px solid #3b82f6; color: #93c5fd; }
+        .agent-seq { background: #1a2e1a; border: 1.5px solid #4ade80; color: #86efac; }
+        .agent-parallel { background: #2d1f0f; border: 1.5px solid #f59e0b; color: #fcd34d; }
+        .agent-loop { background: #1f0a0a; border: 1.5px solid #ef4444; color: #fca5a5; }
+        .agent-hitl { background: #2e1065; border: 1.5px solid #a855f7; color: #d8b4fe; }
+        .agent-mcp { background: #0c1222; border: 1.5px solid #6366f1; color: #a5b4fc; }
+        
+        .pattern-badge { 
+            display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; 
+            font-weight: 600; margin-left: 6px; 
+        }
+        .badge-seq { background: #064e3b; color: #6ee7b7; }
+        .badge-par { background: #451a03; color: #fbbf24; }
+        .badge-loop { background: #450a0a; color: #fca5a5; }
+        .badge-hitl { background: #2e1065; color: #d8b4fe; }
+        
+        .parallel-group { 
+            background: #1a1505; border: 2px solid #f59e0b; border-radius: 10px; 
+            padding: 15px; margin: 10px 0; 
+        }
+        .parallel-group .title { color: #fbbf24; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+        .parallel-items { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .parallel-item { 
+            background: #1f1710; border: 1px solid #d97706; border-radius: 6px; 
+            padding: 8px 12px; font-size: 11px; color: #fcd34d; text-align: center;
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
+        th { background: #1e293b; color: #94a3b8; padding: 10px; text-align: left; border: 1px solid #334155; }
+        td { padding: 10px; border: 1px solid #1e293b; }
+        tr:nth-child(even) { background: #0f172a; }
+        tr:nth-child(odd) { background: #1e293b; }
+        
+        .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 15px 0; }
+        .tech-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; }
+        .tech-card h4 { color: #3b82f6; font-size: 12px; margin-bottom: 6px; }
+        .tech-card p { color: #94a3b8; font-size: 11px; line-height: 1.5; }
+        
+        .section { margin-bottom: 30px; }
+        .description { color: #cbd5e1; font-size: 14px; line-height: 1.7; margin: 10px 0; }
+        
+        .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+        .tech-badge { 
+            background: #1e293b; border: 1px solid #475569; border-radius: 20px; 
+            padding: 5px 12px; font-size: 11px; color: #94a3b8; 
+        }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        @media print {
+            body { background: white; color: #1e293b; padding: 15px; }
+            .flowchart { background: #f8fafc; border-color: #e2e8f0; }
+            .kpi-card { background: #f1f5f9; border-color: #e2e8f0; }
+            .kpi-value { color: #1d4ed8; }
+            .agent-box { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            h1 { color: #1d4ed8; }
+            h2 { color: #16a34a; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- HEADER -->
+        <h1>&#128167; PRONUVE Water Intelligence</h1>
+        <p class="subtitle">Autonomous Multi-Agent Water Quality Monitoring System<br>
+        Google for Startups AI Agents Challenge 2026 — Track 1 (Build)</p>
+        
+        <!-- KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-value">21</div><div class="kpi-label">Specialized Agents</div></div>
+            <div class="kpi-card"><div class="kpi-value">5</div><div class="kpi-label">ADK Patterns</div></div>
+            <div class="kpi-card"><div class="kpi-value">4</div><div class="kpi-label">MCP Servers</div></div>
+            <div class="kpi-card"><div class="kpi-value">5</div><div class="kpi-label">Anomaly Methods</div></div>
+            <div class="kpi-card"><div class="kpi-value">A2A</div><div class="kpi-label">Protocol Support</div></div>
+            <div class="kpi-card"><div class="kpi-value">GCP</div><div class="kpi-label">Cloud Native</div></div>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="section">
+            <h2>Project Overview</h2>
+            <p class="description">
+                PRONUVE Water Intelligence is an autonomous multi-agent AI system that monitors municipal park irrigation 
+                water consumption across Turkish cities. Using <strong>Google ADK</strong> as the orchestration framework, 
+                21 specialized agents collaborate to detect anomalies, predict consumption trends, optimize costs, ensure 
+                regulatory compliance, and alert officials — all with minimal human intervention.
+            </p>
+            <p class="description">
+                The system addresses a critical gap: Turkey's 1,400+ municipalities manage 10,000+ public parks with 
+                mostly manual water monitoring. Late detection of leaks and over-irrigation costs billions annually. 
+                PRONUVE brings AI-powered intelligence to this domain using real data from <strong>ASKİ (Ankara Water Authority)</strong> 
+                through an active research partnership funded by <strong>TÜBİTAK</strong>.
+            </p>
+        </div>
+
+        <!-- ARCHITECTURE FLOWCHART -->
+        <div class="section">
+            <h2>Multi-Agent Architecture Flowchart</h2>
+            <div class="flowchart">
+                <!-- Root -->
+                <div class="flow-row">
+                    <div class="agent-box agent-root" style="min-width: 350px;">
+                        <strong>PRONUVE Orchestrator</strong><br>
+                        <span style="font-size:10px; color:#64748b;">LlmAgent | Gemini 2.5 Flash | Coordinates all agents</span>
+                    </div>
+                </div>
+                <div class="flow-arrow-down">&#9660;</div>
+                
+                <!-- Stage 1: Data Pipeline -->
+                <div style="background:#071a07; border:1.5px solid #22c55e; border-radius:8px; padding:15px; margin:10px 0;">
+                    <div style="color:#4ade80; font-size:12px; font-weight:600; margin-bottom:10px;">
+                        STAGE 1: Data Pipeline <span class="pattern-badge badge-seq">SequentialAgent</span>
+                    </div>
+                    <div class="flow-row">
+                        <div class="agent-box agent-seq">Data Ingest<br><small>BigQuery MCP</small></div>
+                        <div class="flow-arrow">&#8594;</div>
+                        <div class="agent-box agent-seq">Data Quality<br><small>Validation</small></div>
+                        <div class="flow-arrow">&#8594;</div>
+                        <div class="agent-box agent-seq">Weather Agent<br><small>ET&#8320; Calculation</small></div>
+                    </div>
+                </div>
+                <div class="flow-arrow-down">&#9660;</div>
+                
+                <!-- Stage 2: Parallel Analysis -->
+                <div class="parallel-group">
+                    <div class="title">STAGE 2: Analysis Layer <span class="pattern-badge badge-par">ParallelAgent</span></div>
+                    <div class="parallel-items">
+                        <div class="parallel-item">Water Analysis<br><small>Efficiency calc</small></div>
+                        <div class="parallel-item" style="border-color:#ef4444; min-width:250px;">
+                            <strong>Anomaly Detection</strong> (ParallelAgent &#215;5)<br>
+                            <small>Z-Score | IQR | MovAvg | IForest | CUSUM</small><br>
+                            <small style="color:#fca5a5;">&#8594; Consensus: &#8805;2/5 = confirmed</small>
+                        </div>
+                        <div class="parallel-item">Prediction<br><small>Gemini Pro | 30-90d</small></div>
+                        <div class="parallel-item">NDVI Satellite<br><small>Earth Engine MCP</small></div>
+                        <div class="parallel-item">Leak Detection<br><small>Night flow analysis</small></div>
+                    </div>
+                </div>
+                <div class="flow-arrow-down">&#9660;</div>
+                
+                <!-- Stage 3: Optimization -->
+                <div class="parallel-group" style="border-color:#6366f1; background:#0c0c22;">
+                    <div class="title" style="color:#a5b4fc;">STAGE 3: Optimization Layer <span class="pattern-badge badge-par">ParallelAgent</span></div>
+                    <div class="parallel-items">
+                        <div class="parallel-item" style="border-color:#6366f1; color:#a5b4fc;">Cost Optimizer<br><small>Savings calc</small></div>
+                        <div class="parallel-item" style="border-color:#6366f1; color:#a5b4fc;">Irrigation Scheduler<br><small>Smart timing</small></div>
+                        <div class="parallel-item" style="border-color:#6366f1; color:#a5b4fc;">Comparative Agent<br><small>Park benchmarks</small></div>
+                    </div>
+                </div>
+                <div class="flow-arrow-down">&#9660;</div>
+                
+                <!-- Stage 4: Governance -->
+                <div style="background:#070a1a; border:1.5px solid #3b82f6; border-radius:8px; padding:15px; margin:10px 0;">
+                    <div style="color:#93c5fd; font-size:12px; font-weight:600; margin-bottom:10px;">
+                        STAGE 4: Governance <span class="pattern-badge badge-seq">SequentialAgent</span>
+                    </div>
+                    <div class="flow-row">
+                        <div class="agent-box agent-seq" style="border-color:#3b82f6; color:#93c5fd;">Compliance Agent<br><small>Regulation check</small></div>
+                        <div class="flow-arrow">&#8594;</div>
+                        <div class="agent-box agent-seq" style="border-color:#3b82f6; color:#93c5fd;">Sustainability Agent<br><small>SDG 6,11,13,15</small></div>
+                    </div>
+                </div>
+                <div class="flow-arrow-down">&#9660;</div>
+                
+                <!-- Stage 5: Output -->
+                <div class="flow-row">
+                    <div class="agent-box agent-seq">Report Generator<br><small>PDF + Markdown</small></div>
+                    <div class="flow-arrow">&#8594;</div>
+                    <div class="agent-box agent-loop">Alert Agent<br><small style="font-size:9px;">&#128680; Human-in-the-Loop Approval</small></div>
+                </div>
+                
+                <!-- Loop -->
+                <div style="margin-top: 20px; text-align: center; border-top: 1px dashed #475569; padding-top: 15px;">
+                    <div class="agent-box agent-loop" style="min-width: 400px;">
+                        &#128260; Monitoring Loop <span class="pattern-badge badge-loop">LoopAgent</span><br>
+                        <small>Repeats full pipeline daily/weekly | max_iterations: 30</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGENT TABLE -->
+        <div class="section">
+            <h2>Complete Agent Registry (21 Agents)</h2>
+            <table>
+                <tr><th>#</th><th>Agent</th><th>Model</th><th>ADK Pattern</th><th>Role</th></tr>
+                <tr><td>1</td><td><strong>pronuve_orchestrator</strong></td><td>gemini-2.5-flash</td><td>LlmAgent (root)</td><td>Main coordinator</td></tr>
+                <tr><td>2</td><td>data_ingest_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>BigQuery data collection</td></tr>
+                <tr><td>3</td><td>data_quality_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Data validation & scoring</td></tr>
+                <tr><td>4</td><td>weather_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Forecast + ET&#8320; calc</td></tr>
+                <tr><td>5</td><td>water_analysis_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Consumption vs needs</td></tr>
+                <tr><td>6</td><td>zscore_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>Z-Score anomaly</td></tr>
+                <tr><td>7</td><td>iqr_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>IQR anomaly</td></tr>
+                <tr><td>8</td><td>moving_avg_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>Moving Average anomaly</td></tr>
+                <tr><td>9</td><td>isolation_forest_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>ML-based anomaly</td></tr>
+                <tr><td>10</td><td>cusum_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>Cumulative shift detection</td></tr>
+                <tr><td>11</td><td><strong>anomaly_consensus</strong></td><td>gemini-2.5-pro</td><td>Parallel + LLM</td><td>Multi-method consensus</td></tr>
+                <tr><td>12</td><td><strong>prediction_agent</strong></td><td>gemini-2.5-pro</td><td>Parallel</td><td>30/60/90 day forecast</td></tr>
+                <tr><td>13</td><td>ndvi_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Satellite vegetation health</td></tr>
+                <tr><td>14</td><td>leak_detection_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Night flow + pipe burst</td></tr>
+                <tr><td>15</td><td>cost_optimization_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Savings calculations</td></tr>
+                <tr><td>16</td><td>irrigation_scheduler_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Smart watering schedule</td></tr>
+                <tr><td>17</td><td>comparative_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Park benchmarking</td></tr>
+                <tr><td>18</td><td>compliance_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Regulation monitoring</td></tr>
+                <tr><td>19</td><td>sustainability_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>SDG & CO&#8322; scoring</td></tr>
+                <tr><td>20</td><td>report_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Auto report generation</td></tr>
+                <tr><td>21</td><td><strong>alert_agent</strong></td><td>gemini-2.5-flash</td><td>Loop + HITL</td><td>Critical alerts + human approval</td></tr>
+            </table>
+        </div>
+
+        <!-- ADK PATTERNS -->
+        <div class="section">
+            <h2>ADK Patterns Demonstrated</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>SequentialAgent (&#215;3)</h4>
+                    <p>Data Pipeline, Governance Pipeline, Full Pipeline — ordered stage execution</p>
+                </div>
+                <div class="tech-card">
+                    <h4>ParallelAgent (&#215;3)</h4>
+                    <p>5-method anomaly detection, analysis layer, optimization layer — concurrent execution</p>
+                </div>
+                <div class="tech-card">
+                    <h4>LoopAgent (&#215;1)</h4>
+                    <p>Continuous monitoring cycle with configurable intervals (daily/weekly)</p>
+                </div>
+                <div class="tech-card">
+                    <h4>Human-in-the-Loop (&#215;1)</h4>
+                    <p>Critical alert approval before dispatch — Approve / Modify / Reject</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TECHNOLOGY STACK -->
+        <div class="section">
+            <h2>Technology Stack</h2>
+            <div class="two-col">
+                <div>
+                    <h3>Core AI / Agent</h3>
+                    <div class="badge-row">
+                        <span class="tech-badge">Google ADK</span>
+                        <span class="tech-badge">Gemini 2.5 Flash</span>
+                        <span class="tech-badge">Gemini 2.5 Pro</span>
+                        <span class="tech-badge">MCP Protocol</span>
+                        <span class="tech-badge">A2A Protocol</span>
+                    </div>
+                    <h3>Google Cloud</h3>
+                    <div class="badge-row">
+                        <span class="tech-badge">Cloud Run</span>
+                        <span class="tech-badge">BigQuery</span>
+                        <span class="tech-badge">Earth Engine</span>
+                        <span class="tech-badge">Vertex AI</span>
+                        <span class="tech-badge">Gmail API</span>
+                        <span class="tech-badge">Cloud Storage</span>
+                    </div>
+                </div>
+                <div>
+                    <h3>Backend</h3>
+                    <div class="badge-row">
+                        <span class="tech-badge">Python 3.12</span>
+                        <span class="tech-badge">FastAPI</span>
+                        <span class="tech-badge">Pydantic</span>
+                        <span class="tech-badge">NumPy</span>
+                        <span class="tech-badge">Docker</span>
+                    </div>
+                    <h3>Frontend / Dashboard</h3>
+                    <div class="badge-row">
+                        <span class="tech-badge">Streamlit</span>
+                        <span class="tech-badge">Plotly</span>
+                        <span class="tech-badge">Pandas</span>
+                    </div>
+                    <h3>Data Sources</h3>
+                    <div class="badge-row">
+                        <span class="tech-badge">ASKİ Water Data</span>
+                        <span class="tech-badge">IoT Sensors (ESP32)</span>
+                        <span class="tech-badge">Sentinel-2 NDVI</span>
+                        <span class="tech-badge">OpenMeteo Weather</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MCP & A2A -->
+        <div class="section">
+            <h2>MCP & A2A Integration</h2>
+            <table>
+                <tr><th>MCP Server</th><th>Purpose</th><th>Tools Provided</th></tr>
+                <tr><td>BigQuery MCP</td><td>Water consumption & IoT sensor data</td><td>query_consumption, query_sensors, query_historical</td></tr>
+                <tr><td>Earth Engine MCP</td><td>NDVI satellite vegetation analysis</td><td>get_ndvi, get_ndvi_timeseries, get_land_cover</td></tr>
+                <tr><td>Weather MCP</td><td>7-day forecasts & ET&#8320; calculation</td><td>get_forecast, calculate_eto</td></tr>
+                <tr><td>Gmail MCP</td><td>Alert notifications to stakeholders</td><td>send_email, draft_email</td></tr>
+            </table>
+            <p class="description" style="margin-top:15px;">
+                <strong>A2A Protocol:</strong> Agent-to-Agent communication with external systems — 
+                Municipal Management (work orders), IoT Gateway (sensor data, valve control), Weather Service (extended forecasts).
+            </p>
+        </div>
+
+        <!-- REAL-WORLD IMPACT -->
+        <div class="section">
+            <h2>Real-World Impact & Partnership</h2>
+            <div class="two-col">
+                <div>
+                    <h3>Partnerships</h3>
+                    <p class="description">
+                        &#8226; <strong>ASKİ</strong> — Ankara Water Authority (active data partnership)<br>
+                        &#8226; <strong>TÜBİTAK</strong> — Funded research (Project #1812)<br>
+                        &#8226; <strong>METU/ODTÜ</strong> — Academic collaboration<br>
+                        &#8226; <strong>ProgenX</strong> — AI startup (development)<br>
+                        &#8226; <strong>PRONUVE</strong> — Water technology research
+                    </p>
+                </div>
+                <div>
+                    <h3>Projected Impact</h3>
+                    <p class="description">
+                        &#8226; <strong>174,420 TRY/year</strong> cost savings (pilot parks)<br>
+                        &#8226; <strong>4,080 m&#179;/year</strong> water saved<br>
+                        &#8226; <strong>1,534 kg/year</strong> CO&#8322; avoided<br>
+                        &#8226; <strong>3,264 kWh/year</strong> energy reduction<br>
+                        &#8226; <strong>1,400+</strong> addressable municipalities in Turkey
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSINESS MODEL -->
+        <div class="section">
+            <h2>Business Model</h2>
+            <p class="description">
+                <strong>B2G SaaS</strong> — Monthly subscription per municipality based on park count.<br>
+                <strong>Tier 1:</strong> 1-10 parks (basic monitoring)<br>
+                <strong>Tier 2:</strong> 10-50 parks (full analysis + predictions)<br>
+                <strong>Tier 3:</strong> 50+ parks (enterprise with dedicated support)<br><br>
+                <strong>Market:</strong> 1,400+ Turkish municipalities &#8594; expandable to global smart-city market
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #1e293b; color: #64748b; font-size: 12px;">
+            <strong>ProgenX + PRONUVE</strong> | Google for Startups AI Agents Challenge 2026 | Track 1: Build<br>
+            Built with Google ADK, Gemini, Cloud Run, BigQuery, Earth Engine
+        </div>
+    </div>
+</body>
+</html>

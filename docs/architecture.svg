@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#0f1117" rx="8"/>
+  
+  <!-- Title -->
+  <text x="600" y="35" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="700">PRONUVE Water Intelligence  Multi-Agent Architecture</text>
+  <text x="600" y="55" text-anchor="middle" fill="#94a3b8" font-size="12">Google ADK | Gemini | Cloud Run | BigQuery | Earth Engine</text>
+  
+  <!-- Root Agent -->
+  <rect x="400" y="70" width="400" height="55" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+  <text x="600" y="95" text-anchor="middle" fill="#93c5fd" font-size="13" font-weight="600">ROOT AGENT  Orchestrator</text>
+  <text x="600" y="112" text-anchor="middle" fill="#64748b" font-size="10">Gemini 2.5 Flash | Coordinates all agents</text>
+  
+  <!-- Sequential Pipeline Box -->
+  <rect x="50" y="145" width="700" height="530" rx="6" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="70" y="165" fill="#4ade80" font-size="11" font-weight="600">ë SequentialAgent Pipeline</text>
+  
+  <!-- Data Ingest -->
+  <rect x="120" y="180" width="250" height="50" rx="6" fill="#1a2e1a" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="245" y="202" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">1. Data Ingestion Agent</text>
+  <text x="245" y="218" text-anchor="middle" fill="#64748b" font-size="10">Sensors + Meters ’ BigQuery</text>
+  
+  <!-- Water Analysis -->
+  <rect x="120" y="250" width="250" height="50" rx="6" fill="#1a2e1a" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="245" y="272" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">2. Water Analysis Agent</text>
+  <text x="245" y="288" text-anchor="middle" fill="#64748b" font-size="10">Consumption vs ET€ efficiency</text>
+  
+  <!-- Arrows between sequential -->
+  <line x1="245" y1="230" x2="245" y2="250" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="245" y1="300" x2="245" y2="320" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <!-- Parallel Anomaly Block -->
+  <rect x="80" y="320" width="640" height="140" rx="6" fill="#2d1f0f" stroke="#f59e0b" stroke-width="2"/>
+  <text x="100" y="340" fill="#fbbf24" font-size="11" font-weight="600">ë ParallelAgent  5 Detection Methods</text>
+  
+  <!-- 5 Methods -->
+  <rect x="100" y="355" width="110" height="40" rx="4" fill="#1f1710" stroke="#d97706" stroke-width="1"/>
+  <text x="155" y="378" text-anchor="middle" fill="#fcd34d" font-size="10" font-weight="500">Z-Score</text>
+  <text x="155" y="390" text-anchor="middle" fill="#92400e" font-size="8">±2Ã threshold</text>
+  
+  <rect x="220" y="355" width="110" height="40" rx="4" fill="#1f1710" stroke="#d97706" stroke-width="1"/>
+  <text x="275" y="378" text-anchor="middle" fill="#fcd34d" font-size="10" font-weight="500">IQR</text>
+  <text x="275" y="390" text-anchor="middle" fill="#92400e" font-size="8">Q1-1.5×IQR</text>
+  
+  <rect x="340" y="355" width="110" height="40" rx="4" fill="#1f1710" stroke="#d97706" stroke-width="1"/>
+  <text x="395" y="378" text-anchor="middle" fill="#fcd34d" font-size="10" font-weight="500">Moving Avg</text>
+  <text x="395" y="390" text-anchor="middle" fill="#92400e" font-size="8">30% deviation</text>
+  
+  <rect x="460" y="355" width="120" height="40" rx="4" fill="#1f1710" stroke="#d97706" stroke-width="1"/>
+  <text x="520" y="378" text-anchor="middle" fill="#fcd34d" font-size="10" font-weight="500">Isolation Forest</text>
+  <text x="520" y="390" text-anchor="middle" fill="#92400e" font-size="8">ML-based</text>
+  
+  <rect x="590" y="355" width="110" height="40" rx="4" fill="#1f1710" stroke="#d97706" stroke-width="1"/>
+  <text x="645" y="378" text-anchor="middle" fill="#fcd34d" font-size="10" font-weight="500">CUSUM</text>
+  <text x="645" y="390" text-anchor="middle" fill="#92400e" font-size="8">Shift detection</text>
+  
+  <!-- Consensus -->
+  <rect x="220" y="410" width="360" height="35" rx="4" fill="#451a03" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="400" y="432" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="600">CONSENSUS: Anomaly if e2/5 methods agree</text>
+  
+  <!-- Arrow from parallel to prediction -->
+  <line x1="400" y1="460" x2="400" y2="480" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <!-- Prediction -->
+  <rect x="120" y="480" width="250" height="50" rx="6" fill="#1a2e1a" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="245" y="502" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">4. Prediction Agent</text>
+  <text x="245" y="518" text-anchor="middle" fill="#64748b" font-size="10">30/60/90 day forecast | Gemini Pro</text>
+  
+  <line x1="245" y1="530" x2="245" y2="550" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <!-- Report -->
+  <rect x="120" y="555" width="250" height="50" rx="6" fill="#1a2e1a" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="245" y="577" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">5. Report Generator Agent</text>
+  <text x="245" y="593" text-anchor="middle" fill="#64748b" font-size="10">Auto compliance reports</text>
+  
+  <!-- NDVI Agent (standalone) -->
+  <rect x="800" y="180" width="330" height="80" rx="6" fill="#0f172a" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="965" y="205" text-anchor="middle" fill="#a5b4fc" font-size="12" font-weight="600">6. NDVI Satellite Agent</text>
+  <text x="965" y="222" text-anchor="middle" fill="#64748b" font-size="10">Google Earth Engine</text>
+  <text x="965" y="238" text-anchor="middle" fill="#64748b" font-size="10">Vegetation health: Sentinel-2 NDVI</text>
+  <text x="965" y="252" text-anchor="middle" fill="#818cf8" font-size="9">MCP: Earth Engine API</text>
+  
+  <!-- Alert Agent (standalone with loop) -->
+  <rect x="800" y="300" width="330" height="210" rx="6" fill="#1f0a0a" stroke="#ef4444" stroke-width="2"/>
+  <text x="820" y="320" fill="#fca5a5" font-size="11" font-weight="600">ë LoopAgent + Human-in-the-Loop</text>
+  
+  <rect x="830" y="335" width="270" height="35" rx="4" fill="#2d0a0a" stroke="#dc2626" stroke-width="1"/>
+  <text x="965" y="357" text-anchor="middle" fill="#fca5a5" font-size="11">7. Alert &amp; Compliance Agent</text>
+  
+  <rect x="860" y="385" width="210" height="30" rx="4" fill="#1c0505" stroke="#991b1b" stroke-width="1"/>
+  <text x="965" y="404" text-anchor="middle" fill="#f87171" font-size="10">= Loop: Check thresholds</text>
+  
+  <line x1="965" y1="415" x2="965" y2="430" stroke="#ef4444" stroke-width="1" marker-end="url(#arrow)"/>
+  
+  <rect x="860" y="430" width="210" height="30" rx="4" fill="#3b0764" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="965" y="449" text-anchor="middle" fill="#d8b4fe" font-size="10">=d HUMAN: Approve/Reject?</text>
+  
+  <line x1="965" y1="460" x2="965" y2="475" stroke="#ef4444" stroke-width="1" marker-end="url(#arrow)"/>
+  
+  <rect x="860" y="475" width="210" height="25" rx="4" fill="#1c0505" stroke="#991b1b" stroke-width="1"/>
+  <text x="965" y="492" text-anchor="middle" fill="#fca5a5" font-size="10">=ç Gmail MCP ’ Send Alert</text>
+  
+  <!-- MCP Connection lines -->
+  <line x1="370" y1="205" x2="450" y2="205" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="455" y="200" fill="#a78bfa" font-size="9">MCP: BigQuery</text>
+  
+  <line x1="370" y1="580" x2="450" y2="580" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="455" y="575" fill="#a78bfa" font-size="9">MCP: Google Docs</text>
+  
+  <!-- Google Cloud Footer -->
+  <rect x="50" y="720" width="1100" height="80" rx="6" fill="#111827" stroke="#374151" stroke-width="1"/>
+  <text x="600" y="740" text-anchor="middle" fill="#9ca3af" font-size="11" font-weight="600">GOOGLE CLOUD PLATFORM</text>
+  
+  <rect x="80" y="755" width="140" height="30" rx="4" fill="#1f2937" stroke="#4b5563"/>
+  <text x="150" y="774" text-anchor="middle" fill="#d1d5db" font-size="10">Cloud Run</text>
+  
+  <rect x="240" y="755" width="140" height="30" rx="4" fill="#1f2937" stroke="#4b5563"/>
+  <text x="310" y="774" text-anchor="middle" fill="#d1d5db" font-size="10">BigQuery</text>
+  
+  <rect x="400" y="755" width="140" height="30" rx="4" fill="#1f2937" stroke="#4b5563"/>
+  <text x="470" y="774" text-anchor="middle" fill="#d1d5db" font-size="10">Earth Engine</text>
+  
+  <rect x="560" y="755" width="140" height="30" rx="4" fill="#1f2937" stroke="#4b5563"/>
+  <text x="630" y="774" text-anchor="middle" fill="#d1d5db" font-size="10">Vertex AI (Gemini)</text>
+  
+  <rect x="720" y="755" width="140" height="30" rx="4" fill="#1f2937" stroke="#4b5563"/>
+  <text x="790" y="774" text-anchor="middle" fill="#d1d5db" font-size="10">Gmail API</text>
+  
+  <rect x="880" y="755" width="140" height="30" rx="4" fill="#1f2937" stroke="#4b5563"/>
+  <text x="950" y="774" text-anchor="middle" fill="#d1d5db" font-size="10">Cloud Storage</text>
+  
+  <!-- Data Sources -->
+  <rect x="50" y="830" width="1100" height="55" rx="6" fill="#0c0c0c" stroke="#1f2937" stroke-width="1"/>
+  <text x="600" y="850" text-anchor="middle" fill="#6b7280" font-size="11" font-weight="600">EXTERNAL DATA SOURCES</text>
+  
+  <text x="200" y="872" text-anchor="middle" fill="#9ca3af" font-size="10"><! IoT Sensors (ESP32)</text>
+  <text x="450" y="872" text-anchor="middle" fill="#9ca3af" font-size="10">=§ Water Meters (Municipal)</text>
+  <text x="700" y="872" text-anchor="middle" fill="#9ca3af" font-size="10">=ð Sentinel-2 Satellite</text>
+  <text x="950" y="872" text-anchor="middle" fill="#9ca3af" font-size="10">=Ë Regulatory Thresholds</text>
+  
+  <!-- Connection from root to pipeline -->
+  <line x1="500" y1="125" x2="245" y2="180" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="700" y1="125" x2="965" y2="180" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="700" y1="125" x2="965" y2="300" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <!-- Stats badge -->
+  <rect x="50" y="640" width="350" height="65" rx="6" fill="#111827" stroke="#374151" stroke-width="1"/>
+  <text x="70" y="660" fill="#e2e8f0" font-size="11" font-weight="600">System Stats</text>
+  <text x="70" y="680" fill="#9ca3af" font-size="10">Agents: 7 | Patterns: 4 (Seq, Parallel, Loop, HITL)</text>
+  <text x="70" y="695" fill="#9ca3af" font-size="10">MCP Tools: 3 | Anomaly Methods: 5 | Deploy: Cloud Run</text>
+  
+  <!-- Partnership badge -->
+  <rect x="450" y="640" width="350" height="65" rx="6" fill="#111827" stroke="#374151" stroke-width="1"/>
+  <text x="470" y="660" fill="#e2e8f0" font-size="11" font-weight="600">Partnership</text>
+  <text x="470" y="680" fill="#9ca3af" font-size="10">ProgenX (AI Startup) + PRONUVE (METU Research)</text>
+  <text x="470" y="695" fill="#9ca3af" font-size="10">TÜB0TAK Funded | Real Municipal Data | ASK0 Partner</text>
+</svg>
