@@ -1,381 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRONUVE Water Intelligence — Architecture & Project Overview</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: #0f172a; 
-            color: #e2e8f0;
-            padding: 30px;
-        }
-        .page { max-width: 1200px; margin: 0 auto; }
-        
-        h1 { color: #3b82f6; font-size: 28px; text-align: center; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
-        
-        h2 { color: #22c55e; font-size: 20px; margin: 30px 0 15px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
-        h3 { color: #f59e0b; font-size: 16px; margin: 20px 0 10px; }
-        
-        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 30px; }
-        .kpi-card { background: #1e293b; border-radius: 8px; padding: 15px; text-align: center; border: 1px solid #334155; }
-        .kpi-value { font-size: 24px; font-weight: 700; color: #3b82f6; }
-        .kpi-label { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-        
-        .flowchart { background: #1e293b; border-radius: 12px; padding: 30px; margin: 20px 0; border: 1px solid #334155; }
-        
-        .flow-row { display: flex; align-items: center; justify-content: center; margin: 8px 0; gap: 10px; flex-wrap: wrap; }
-        .flow-arrow { color: #4ade80; font-size: 20px; }
-        .flow-arrow-down { text-align: center; color: #4ade80; font-size: 18px; margin: 5px 0; }
-        
-        .agent-box { 
-            padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; 
-            display: inline-block; min-width: 140px; text-align: center;
-        }
-        .agent-root { background: #1e3a5f; border: 2px solid #3b82f6; color: #93c5fd; }
-        .agent-seq { background: #1a2e1a; border: 1.5px solid #4ade80; color: #86efac; }
-        .agent-parallel { background: #2d1f0f; border: 1.5px solid #f59e0b; color: #fcd34d; }
-        .agent-loop { background: #1f0a0a; border: 1.5px solid #ef4444; color: #fca5a5; }
-        .agent-hitl { background: #2e1065; border: 1.5px solid #a855f7; color: #d8b4fe; }
-        .agent-mcp { background: #0c1222; border: 1.5px solid #6366f1; color: #a5b4fc; }
-        
-        .pattern-badge { 
-            display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; 
-            font-weight: 600; margin-left: 6px; 
-        }
-        .badge-seq { background: #064e3b; color: #6ee7b7; }
-        .badge-par { background: #451a03; color: #fbbf24; }
-        .badge-loop { background: #450a0a; color: #fca5a5; }
-        .badge-hitl { background: #2e1065; color: #d8b4fe; }
-        
-        .parallel-group { 
-            background: #1a1505; border: 2px solid #f59e0b; border-radius: 10px; 
-            padding: 15px; margin: 10px 0; 
-        }
-        .parallel-group .title { color: #fbbf24; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
-        .parallel-items { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-        .parallel-item { 
-            background: #1f1710; border: 1px solid #d97706; border-radius: 6px; 
-            padding: 8px 12px; font-size: 11px; color: #fcd34d; text-align: center;
-        }
-        
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
-        th { background: #1e293b; color: #94a3b8; padding: 10px; text-align: left; border: 1px solid #334155; }
-        td { padding: 10px; border: 1px solid #1e293b; }
-        tr:nth-child(even) { background: #0f172a; }
-        tr:nth-child(odd) { background: #1e293b; }
-        
-        .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 15px 0; }
-        .tech-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; }
-        .tech-card h4 { color: #3b82f6; font-size: 12px; margin-bottom: 6px; }
-        .tech-card p { color: #94a3b8; font-size: 11px; line-height: 1.5; }
-        
-        .section { margin-bottom: 30px; }
-        .description { color: #cbd5e1; font-size: 14px; line-height: 1.7; margin: 10px 0; }
-        
-        .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
-        .tech-badge { 
-            background: #1e293b; border: 1px solid #475569; border-radius: 20px; 
-            padding: 5px 12px; font-size: 11px; color: #94a3b8; 
-        }
-        
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        
-        @media print {
-            body { background: white; color: #1e293b; padding: 15px; }
-            .flowchart { background: #f8fafc; border-color: #e2e8f0; }
-            .kpi-card { background: #f1f5f9; border-color: #e2e8f0; }
-            .kpi-value { color: #1d4ed8; }
-            .agent-box { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-            h1 { color: #1d4ed8; }
-            h2 { color: #16a34a; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRONUVE — System Architecture</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #e2e8f0; padding: 40px; }
+.page { max-width: 1100px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 40px; padding: 30px; background: linear-gradient(135deg, #0c1524, #1a2744); border: 1px solid #1e3048; border-radius: 16px; }
+.header h1 { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header p { color: #94a3b8; font-size: 13px; margin-top: 8px; }
+.badges { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.badge { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; padding: 4px 12px; border-radius: 20px; font-size: 11px; }
+.section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #f1f5f9; margin: 32px 0 16px; padding: 8px 14px; background: #111827; border-left: 3px solid #3b82f6; border-radius: 6px; }
+
+/* Flow Diagram */
+.flow { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 20px 0; }
+.flow-arrow { width: 2px; height: 24px; background: #475569; position: relative; }
+.flow-arrow::after { content: '▼'; position: absolute; bottom: -8px; left: -5px; color: #475569; font-size: 10px; }
+.stage { width: 100%; max-width: 900px; border: 1px solid #1e3048; border-radius: 12px; padding: 20px; position: relative; }
+.stage-label { position: absolute; top: -10px; left: 20px; background: #0a0e1a; padding: 0 8px; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+.stage-blue { border-color: #1e40af; }
+.stage-blue .stage-label { color: #60a5fa; }
+.stage-purple { border-color: #6b21a8; }
+.stage-purple .stage-label { color: #c084fc; }
+.stage-amber { border-color: #92400e; }
+.stage-amber .stage-label { color: #fbbf24; }
+.stage-green { border-color: #065f46; }
+.stage-green .stage-label { color: #34d399; }
+.stage-red { border-color: #7f1d1d; }
+.stage-red .stage-label { color: #fca5a5; }
+.agents-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.agent-box { background: #1a2332; border: 1px solid #2d3748; border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 120px; }
+.agent-box .name { font-size: 11px; font-weight: 700; color: #f1f5f9; }
+.agent-box .detail { font-size: 9px; color: #64748b; margin-top: 3px; }
+.pattern-tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 10px; }
+.tag-seq { background: rgba(59,130,246,0.15); color: #60a5fa; }
+.tag-par { background: rgba(168,85,247,0.15); color: #c084fc; }
+.tag-loop { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.tag-hitl { background: rgba(239,68,68,0.15); color: #fca5a5; }
+
+.anomaly-sub { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+.anomaly-sub .mini { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 6px 10px; font-size: 9px; color: #94a3b8; text-align: center; }
+
+/* MCP Section */
+.mcp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
+.mcp-card { background: #111827; border: 1px solid #1e3048; border-radius: 10px; padding: 14px; text-align: center; }
+.mcp-card .icon { font-size: 24px; }
+.mcp-card .name { font-size: 11px; font-weight: 700; color: #f1f5f9; margin-top: 6px; }
+.mcp-card .desc { font-size: 9px; color: #64748b; margin-top: 3px; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0; }
+.stat { background: #111827; border: 1px solid #1e3048; border-radius: 10px; padding: 14px; text-align: center; }
+.stat .val { font-size: 22px; font-weight: 800; color: #f1f5f9; }
+.stat .lbl { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+.footer { text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #1e3048; color: #475569; font-size: 11px; }
+
+/* Loop wrapper */
+.loop-wrapper { border: 2px dashed #92400e; border-radius: 16px; padding: 16px; position: relative; margin: 10px 0; }
+.loop-label { position: absolute; top: -10px; right: 20px; background: #0a0e1a; padding: 0 10px; font-size: 10px; font-weight: 700; color: #fbbf24; }
+
+@media print { body { background: white; color: #1e293b; padding: 20px; } .header { background: #f8fafc; border-color: #e2e8f0; } .header h1 { -webkit-text-fill-color: #1d4ed8; } .stage { border-color: #cbd5e1; } .agent-box { background: #f8fafc; border-color: #e2e8f0; } .agent-box .name { color: #1e293b; } }
+</style>
 </head>
 <body>
-    <div class="page">
-        <!-- HEADER -->
-        <h1>&#128167; PRONUVE Water Intelligence</h1>
-        <p class="subtitle">Autonomous Multi-Agent Water Quality Monitoring System<br>
-        Google for Startups AI Agents Challenge 2026 — Track 1 (Build)</p>
-        
-        <!-- KPIs -->
-        <div class="kpi-grid">
-            <div class="kpi-card"><div class="kpi-value">21</div><div class="kpi-label">Specialized Agents</div></div>
-            <div class="kpi-card"><div class="kpi-value">5</div><div class="kpi-label">ADK Patterns</div></div>
-            <div class="kpi-card"><div class="kpi-value">4</div><div class="kpi-label">MCP Servers</div></div>
-            <div class="kpi-card"><div class="kpi-value">5</div><div class="kpi-label">Anomaly Methods</div></div>
-            <div class="kpi-card"><div class="kpi-value">A2A</div><div class="kpi-label">Protocol Support</div></div>
-            <div class="kpi-card"><div class="kpi-value">GCP</div><div class="kpi-label">Cloud Native</div></div>
-        </div>
+<div class="page">
 
-        <!-- OVERVIEW -->
-        <div class="section">
-            <h2>Project Overview</h2>
-            <p class="description">
-                PRONUVE Water Intelligence is an autonomous multi-agent AI system that monitors municipal park irrigation 
-                water consumption across Turkish cities. Using <strong>Google ADK</strong> as the orchestration framework, 
-                21 specialized agents collaborate to detect anomalies, predict consumption trends, optimize costs, ensure 
-                regulatory compliance, and alert officials — all with minimal human intervention.
-            </p>
-            <p class="description">
-                The system addresses a critical gap: Turkey's 1,400+ municipalities manage 10,000+ public parks with 
-                mostly manual water monitoring. Late detection of leaks and over-irrigation costs billions annually. 
-                PRONUVE brings AI-powered intelligence to this domain using real data from <strong>ASKİ (Ankara Water Authority)</strong> 
-                through an active research partnership funded by <strong>TÜBİTAK</strong>.
-            </p>
-        </div>
+<div class="header">
+    <h1>PRONUVE Water Intelligence</h1>
+    <p>Multi-Agent System Architecture — Google ADK</p>
+    <div class="badges">
+        <span class="badge">21 AI Agents</span>
+        <span class="badge">5 ADK Patterns</span>
+        <span class="badge">4 MCP Servers</span>
+        <span class="badge">2 A2A Connections</span>
+        <span class="badge">Gemini 2.5</span>
+    </div>
+</div>
 
-        <!-- ARCHITECTURE FLOWCHART -->
-        <div class="section">
-            <h2>Multi-Agent Architecture Flowchart</h2>
-            <div class="flowchart">
-                <!-- Root -->
-                <div class="flow-row">
-                    <div class="agent-box agent-root" style="min-width: 350px;">
-                        <strong>PRONUVE Orchestrator</strong><br>
-                        <span style="font-size:10px; color:#64748b;">LlmAgent | Gemini 2.5 Flash | Coordinates all agents</span>
-                    </div>
-                </div>
-                <div class="flow-arrow-down">&#9660;</div>
-                
-                <!-- Stage 1: Data Pipeline -->
-                <div style="background:#071a07; border:1.5px solid #22c55e; border-radius:8px; padding:15px; margin:10px 0;">
-                    <div style="color:#4ade80; font-size:12px; font-weight:600; margin-bottom:10px;">
-                        STAGE 1: Data Pipeline <span class="pattern-badge badge-seq">SequentialAgent</span>
-                    </div>
-                    <div class="flow-row">
-                        <div class="agent-box agent-seq">Data Ingest<br><small>BigQuery MCP</small></div>
-                        <div class="flow-arrow">&#8594;</div>
-                        <div class="agent-box agent-seq">Data Quality<br><small>Validation</small></div>
-                        <div class="flow-arrow">&#8594;</div>
-                        <div class="agent-box agent-seq">Weather Agent<br><small>ET&#8320; Calculation</small></div>
-                    </div>
-                </div>
-                <div class="flow-arrow-down">&#9660;</div>
-                
-                <!-- Stage 2: Parallel Analysis -->
-                <div class="parallel-group">
-                    <div class="title">STAGE 2: Analysis Layer <span class="pattern-badge badge-par">ParallelAgent</span></div>
-                    <div class="parallel-items">
-                        <div class="parallel-item">Water Analysis<br><small>Efficiency calc</small></div>
-                        <div class="parallel-item" style="border-color:#ef4444; min-width:250px;">
-                            <strong>Anomaly Detection</strong> (ParallelAgent &#215;5)<br>
-                            <small>Z-Score | IQR | MovAvg | IForest | CUSUM</small><br>
-                            <small style="color:#fca5a5;">&#8594; Consensus: &#8805;2/5 = confirmed</small>
-                        </div>
-                        <div class="parallel-item">Prediction<br><small>Gemini Pro | 30-90d</small></div>
-                        <div class="parallel-item">NDVI Satellite<br><small>Earth Engine MCP</small></div>
-                        <div class="parallel-item">Leak Detection<br><small>Night flow analysis</small></div>
-                    </div>
-                </div>
-                <div class="flow-arrow-down">&#9660;</div>
-                
-                <!-- Stage 3: Optimization -->
-                <div class="parallel-group" style="border-color:#6366f1; background:#0c0c22;">
-                    <div class="title" style="color:#a5b4fc;">STAGE 3: Optimization Layer <span class="pattern-badge badge-par">ParallelAgent</span></div>
-                    <div class="parallel-items">
-                        <div class="parallel-item" style="border-color:#6366f1; color:#a5b4fc;">Cost Optimizer<br><small>Savings calc</small></div>
-                        <div class="parallel-item" style="border-color:#6366f1; color:#a5b4fc;">Irrigation Scheduler<br><small>Smart timing</small></div>
-                        <div class="parallel-item" style="border-color:#6366f1; color:#a5b4fc;">Comparative Agent<br><small>Park benchmarks</small></div>
-                    </div>
-                </div>
-                <div class="flow-arrow-down">&#9660;</div>
-                
-                <!-- Stage 4: Governance -->
-                <div style="background:#070a1a; border:1.5px solid #3b82f6; border-radius:8px; padding:15px; margin:10px 0;">
-                    <div style="color:#93c5fd; font-size:12px; font-weight:600; margin-bottom:10px;">
-                        STAGE 4: Governance <span class="pattern-badge badge-seq">SequentialAgent</span>
-                    </div>
-                    <div class="flow-row">
-                        <div class="agent-box agent-seq" style="border-color:#3b82f6; color:#93c5fd;">Compliance Agent<br><small>Regulation check</small></div>
-                        <div class="flow-arrow">&#8594;</div>
-                        <div class="agent-box agent-seq" style="border-color:#3b82f6; color:#93c5fd;">Sustainability Agent<br><small>SDG 6,11,13,15</small></div>
-                    </div>
-                </div>
-                <div class="flow-arrow-down">&#9660;</div>
-                
-                <!-- Stage 5: Output -->
-                <div class="flow-row">
-                    <div class="agent-box agent-seq">Report Generator<br><small>PDF + Markdown</small></div>
-                    <div class="flow-arrow">&#8594;</div>
-                    <div class="agent-box agent-loop">Alert Agent<br><small style="font-size:9px;">&#128680; Human-in-the-Loop Approval</small></div>
-                </div>
-                
-                <!-- Loop -->
-                <div style="margin-top: 20px; text-align: center; border-top: 1px dashed #475569; padding-top: 15px;">
-                    <div class="agent-box agent-loop" style="min-width: 400px;">
-                        &#128260; Monitoring Loop <span class="pattern-badge badge-loop">LoopAgent</span><br>
-                        <small>Repeats full pipeline daily/weekly | max_iterations: 30</small>
-                    </div>
-                </div>
+<div class="stats-row">
+    <div class="stat"><div class="val">21</div><div class="lbl">Agents</div></div>
+    <div class="stat"><div class="val">5</div><div class="lbl">Stages</div></div>
+    <div class="stat"><div class="val">30</div><div class="lbl">Loop Cycles</div></div>
+    <div class="stat"><div class="val">15s</div><div class="lbl">Cycle Time</div></div>
+    <div class="stat"><div class="val">4</div><div class="lbl">MCP Servers</div></div>
+    <div class="stat"><div class="val">5</div><div class="lbl">Anomaly Methods</div></div>
+</div>
+
+<div class="section-title">Agent Pipeline Flow</div>
+
+<div class="flow">
+    <!-- Root -->
+    <div class="stage stage-blue" style="max-width:400px;">
+        <div class="stage-label">ROOT</div>
+        <div class="agents-row">
+            <div class="agent-box">
+                <div class="name">Root Orchestrator</div>
+                <div class="detail">LlmAgent • Gemini 2.5 Flash</div>
             </div>
-        </div>
-
-        <!-- AGENT TABLE -->
-        <div class="section">
-            <h2>Complete Agent Registry (21 Agents)</h2>
-            <table>
-                <tr><th>#</th><th>Agent</th><th>Model</th><th>ADK Pattern</th><th>Role</th></tr>
-                <tr><td>1</td><td><strong>pronuve_orchestrator</strong></td><td>gemini-2.5-flash</td><td>LlmAgent (root)</td><td>Main coordinator</td></tr>
-                <tr><td>2</td><td>data_ingest_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>BigQuery data collection</td></tr>
-                <tr><td>3</td><td>data_quality_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Data validation & scoring</td></tr>
-                <tr><td>4</td><td>weather_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Forecast + ET&#8320; calc</td></tr>
-                <tr><td>5</td><td>water_analysis_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Consumption vs needs</td></tr>
-                <tr><td>6</td><td>zscore_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>Z-Score anomaly</td></tr>
-                <tr><td>7</td><td>iqr_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>IQR anomaly</td></tr>
-                <tr><td>8</td><td>moving_avg_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>Moving Average anomaly</td></tr>
-                <tr><td>9</td><td>isolation_forest_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>ML-based anomaly</td></tr>
-                <tr><td>10</td><td>cusum_detector</td><td>gemini-2.5-flash</td><td>Parallel (nested)</td><td>Cumulative shift detection</td></tr>
-                <tr><td>11</td><td><strong>anomaly_consensus</strong></td><td>gemini-2.5-pro</td><td>Parallel + LLM</td><td>Multi-method consensus</td></tr>
-                <tr><td>12</td><td><strong>prediction_agent</strong></td><td>gemini-2.5-pro</td><td>Parallel</td><td>30/60/90 day forecast</td></tr>
-                <tr><td>13</td><td>ndvi_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Satellite vegetation health</td></tr>
-                <tr><td>14</td><td>leak_detection_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Night flow + pipe burst</td></tr>
-                <tr><td>15</td><td>cost_optimization_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Savings calculations</td></tr>
-                <tr><td>16</td><td>irrigation_scheduler_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Smart watering schedule</td></tr>
-                <tr><td>17</td><td>comparative_agent</td><td>gemini-2.5-flash</td><td>Parallel</td><td>Park benchmarking</td></tr>
-                <tr><td>18</td><td>compliance_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Regulation monitoring</td></tr>
-                <tr><td>19</td><td>sustainability_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>SDG & CO&#8322; scoring</td></tr>
-                <tr><td>20</td><td>report_agent</td><td>gemini-2.5-flash</td><td>Sequential</td><td>Auto report generation</td></tr>
-                <tr><td>21</td><td><strong>alert_agent</strong></td><td>gemini-2.5-flash</td><td>Loop + HITL</td><td>Critical alerts + human approval</td></tr>
-            </table>
-        </div>
-
-        <!-- ADK PATTERNS -->
-        <div class="section">
-            <h2>ADK Patterns Demonstrated</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h4>SequentialAgent (&#215;3)</h4>
-                    <p>Data Pipeline, Governance Pipeline, Full Pipeline — ordered stage execution</p>
-                </div>
-                <div class="tech-card">
-                    <h4>ParallelAgent (&#215;3)</h4>
-                    <p>5-method anomaly detection, analysis layer, optimization layer — concurrent execution</p>
-                </div>
-                <div class="tech-card">
-                    <h4>LoopAgent (&#215;1)</h4>
-                    <p>Continuous monitoring cycle with configurable intervals (daily/weekly)</p>
-                </div>
-                <div class="tech-card">
-                    <h4>Human-in-the-Loop (&#215;1)</h4>
-                    <p>Critical alert approval before dispatch — Approve / Modify / Reject</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- TECHNOLOGY STACK -->
-        <div class="section">
-            <h2>Technology Stack</h2>
-            <div class="two-col">
-                <div>
-                    <h3>Core AI / Agent</h3>
-                    <div class="badge-row">
-                        <span class="tech-badge">Google ADK</span>
-                        <span class="tech-badge">Gemini 2.5 Flash</span>
-                        <span class="tech-badge">Gemini 2.5 Pro</span>
-                        <span class="tech-badge">MCP Protocol</span>
-                        <span class="tech-badge">A2A Protocol</span>
-                    </div>
-                    <h3>Google Cloud</h3>
-                    <div class="badge-row">
-                        <span class="tech-badge">Cloud Run</span>
-                        <span class="tech-badge">BigQuery</span>
-                        <span class="tech-badge">Earth Engine</span>
-                        <span class="tech-badge">Vertex AI</span>
-                        <span class="tech-badge">Gmail API</span>
-                        <span class="tech-badge">Cloud Storage</span>
-                    </div>
-                </div>
-                <div>
-                    <h3>Backend</h3>
-                    <div class="badge-row">
-                        <span class="tech-badge">Python 3.12</span>
-                        <span class="tech-badge">FastAPI</span>
-                        <span class="tech-badge">Pydantic</span>
-                        <span class="tech-badge">NumPy</span>
-                        <span class="tech-badge">Docker</span>
-                    </div>
-                    <h3>Frontend / Dashboard</h3>
-                    <div class="badge-row">
-                        <span class="tech-badge">Streamlit</span>
-                        <span class="tech-badge">Plotly</span>
-                        <span class="tech-badge">Pandas</span>
-                    </div>
-                    <h3>Data Sources</h3>
-                    <div class="badge-row">
-                        <span class="tech-badge">ASKİ Water Data</span>
-                        <span class="tech-badge">IoT Sensors (ESP32)</span>
-                        <span class="tech-badge">Sentinel-2 NDVI</span>
-                        <span class="tech-badge">OpenMeteo Weather</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MCP & A2A -->
-        <div class="section">
-            <h2>MCP & A2A Integration</h2>
-            <table>
-                <tr><th>MCP Server</th><th>Purpose</th><th>Tools Provided</th></tr>
-                <tr><td>BigQuery MCP</td><td>Water consumption & IoT sensor data</td><td>query_consumption, query_sensors, query_historical</td></tr>
-                <tr><td>Earth Engine MCP</td><td>NDVI satellite vegetation analysis</td><td>get_ndvi, get_ndvi_timeseries, get_land_cover</td></tr>
-                <tr><td>Weather MCP</td><td>7-day forecasts & ET&#8320; calculation</td><td>get_forecast, calculate_eto</td></tr>
-                <tr><td>Gmail MCP</td><td>Alert notifications to stakeholders</td><td>send_email, draft_email</td></tr>
-            </table>
-            <p class="description" style="margin-top:15px;">
-                <strong>A2A Protocol:</strong> Agent-to-Agent communication with external systems — 
-                Municipal Management (work orders), IoT Gateway (sensor data, valve control), Weather Service (extended forecasts).
-            </p>
-        </div>
-
-        <!-- REAL-WORLD IMPACT -->
-        <div class="section">
-            <h2>Real-World Impact & Partnership</h2>
-            <div class="two-col">
-                <div>
-                    <h3>Partnerships</h3>
-                    <p class="description">
-                        &#8226; <strong>ASKİ</strong> — Ankara Water Authority (active data partnership)<br>
-                        &#8226; <strong>TÜBİTAK</strong> — Funded research (Project #1812)<br>
-                        &#8226; <strong>METU/ODTÜ</strong> — Academic collaboration<br>
-                        &#8226; <strong>ProgenX</strong> — AI startup (development)<br>
-                        &#8226; <strong>PRONUVE</strong> — Water technology research
-                    </p>
-                </div>
-                <div>
-                    <h3>Projected Impact</h3>
-                    <p class="description">
-                        &#8226; <strong>174,420 TRY/year</strong> cost savings (pilot parks)<br>
-                        &#8226; <strong>4,080 m&#179;/year</strong> water saved<br>
-                        &#8226; <strong>1,534 kg/year</strong> CO&#8322; avoided<br>
-                        &#8226; <strong>3,264 kWh/year</strong> energy reduction<br>
-                        &#8226; <strong>1,400+</strong> addressable municipalities in Turkey
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- BUSINESS MODEL -->
-        <div class="section">
-            <h2>Business Model</h2>
-            <p class="description">
-                <strong>B2G SaaS</strong> — Monthly subscription per municipality based on park count.<br>
-                <strong>Tier 1:</strong> 1-10 parks (basic monitoring)<br>
-                <strong>Tier 2:</strong> 10-50 parks (full analysis + predictions)<br>
-                <strong>Tier 3:</strong> 50+ parks (enterprise with dedicated support)<br><br>
-                <strong>Market:</strong> 1,400+ Turkish municipalities &#8594; expandable to global smart-city market
-            </p>
-        </div>
-
-        <!-- FOOTER -->
-        <div style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #1e293b; color: #64748b; font-size: 12px;">
-            <strong>ProgenX + PRONUVE</strong> | Google for Startups AI Agents Challenge 2026 | Track 1: Build<br>
-            Built with Google ADK, Gemini, Cloud Run, BigQuery, Earth Engine
         </div>
     </div>
+
+    <div class="flow-arrow"></div>
+
+    <!-- Loop wrapper -->
+    <div class="loop-wrapper">
+        <div class="loop-label">LoopAgent × 30 iterations</div>
+
+        <!-- Stage 1 -->
+        <div class="stage stage-blue">
+            <div class="stage-label">STAGE 1 — DATA PIPELINE <span class="pattern-tag tag-seq">SequentialAgent</span></div>
+            <div class="agents-row">
+                <div class="agent-box"><div class="name">Data Ingest</div><div class="detail">BigQuery MCP</div></div>
+                <div class="agent-box"><div class="name">Data Quality</div><div class="detail">Validation</div></div>
+                <div class="agent-box"><div class="name">Weather</div><div class="detail">ET₀ + Forecast</div></div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <!-- Stage 2 -->
+        <div class="stage stage-purple">
+            <div class="stage-label">STAGE 2 — ANALYSIS <span class="pattern-tag tag-par">ParallelAgent</span></div>
+            <div class="agents-row">
+                <div class="agent-box"><div class="name">Water Analysis</div><div class="detail">Efficiency</div></div>
+                <div class="agent-box">
+                    <div class="name">Anomaly Detection</div>
+                    <div class="detail">5× Parallel Methods</div>
+                    <div class="anomaly-sub">
+                        <div class="mini">Z-Score</div>
+                        <div class="mini">IQR</div>
+                        <div class="mini">MA</div>
+                        <div class="mini">iForest</div>
+                        <div class="mini">CUSUM</div>
+                    </div>
+                    <div class="detail" style="margin-top:4px;">→ Consensus (≥2/5)</div>
+                </div>
+                <div class="agent-box"><div class="name">Prediction</div><div class="detail">Gemini 2.5 Pro</div></div>
+                <div class="agent-box"><div class="name">NDVI Satellite</div><div class="detail">Earth Engine</div></div>
+                <div class="agent-box"><div class="name">Leak Detection</div><div class="detail">Night-flow</div></div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <!-- Stage 3 -->
+        <div class="stage stage-amber">
+            <div class="stage-label">STAGE 3 — OPTIMIZATION <span class="pattern-tag tag-par">ParallelAgent</span></div>
+            <div class="agents-row">
+                <div class="agent-box"><div class="name">Cost Optimizer</div><div class="detail">Savings calc</div></div>
+                <div class="agent-box"><div class="name">Irrigation Scheduler</div><div class="detail">ET₀-based</div></div>
+                <div class="agent-box"><div class="name">Comparative</div><div class="detail">Benchmarking</div></div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <!-- Stage 4 -->
+        <div class="stage stage-green">
+            <div class="stage-label">STAGE 4 — GOVERNANCE <span class="pattern-tag tag-seq">SequentialAgent</span></div>
+            <div class="agents-row">
+                <div class="agent-box"><div class="name">Compliance</div><div class="detail">Regulations</div></div>
+                <div class="agent-box"><div class="name">Sustainability</div><div class="detail">SDG Scoring</div></div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <!-- Stage 5 -->
+        <div class="stage stage-red">
+            <div class="stage-label">STAGE 5 — OUTPUT <span class="pattern-tag tag-hitl">Human-in-the-Loop</span></div>
+            <div class="agents-row">
+                <div class="agent-box"><div class="name">Report Generator</div><div class="detail">Auto reports</div></div>
+                <div class="agent-box" style="border-color:#7f1d1d;">
+                    <div class="name" style="color:#fca5a5;">Alert Agent</div>
+                    <div class="detail">Gmail MCP</div>
+                    <div class="detail" style="color:#fca5a5;">⚡ Human Approval Required</div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end loop wrapper -->
+</div>
+
+<div class="section-title">MCP & A2A Connections</div>
+<div class="mcp-grid">
+    <div class="mcp-card"><div class="icon">📦</div><div class="name">BigQuery</div><div class="desc">Consumption + sensor data</div></div>
+    <div class="mcp-card"><div class="icon">🛰️</div><div class="name">Earth Engine</div><div class="desc">NDVI satellite imagery</div></div>
+    <div class="mcp-card"><div class="icon">🌤️</div><div class="name">Weather API</div><div class="desc">Forecast + ET₀</div></div>
+    <div class="mcp-card"><div class="icon">📧</div><div class="name">Gmail API</div><div class="desc">Alert dispatch</div></div>
+</div>
+<div class="mcp-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 500px; margin: 12px auto;">
+    <div class="mcp-card" style="border-color:#92400e;"><div class="icon">🏛️</div><div class="name">Municipal System</div><div class="desc">A2A — Work orders</div></div>
+    <div class="mcp-card" style="border-color:#92400e;"><div class="icon">📡</div><div class="name">IoT Gateway</div><div class="desc">A2A — Valve control</div></div>
+</div>
+
+<div class="section-title">Technology Stack</div>
+<div class="mcp-grid">
+    <div class="mcp-card"><div class="name">Google ADK</div><div class="desc">Agent orchestration</div></div>
+    <div class="mcp-card"><div class="name">Gemini 2.5</div><div class="desc">Flash + Pro models</div></div>
+    <div class="mcp-card"><div class="name">Cloud Run</div><div class="desc">Serverless deploy</div></div>
+    <div class="mcp-card"><div class="name">Python 3.12</div><div class="desc">FastAPI + Streamlit</div></div>
+</div>
+
+<div class="footer">
+    <strong>PRONUVE Water Intelligence</strong> — ProgenX + PRONUVE<br>
+    Google for Startups AI Agents Challenge 2026 • Track 1: Build
+</div>
+
+</div>
 </body>
 </html>
