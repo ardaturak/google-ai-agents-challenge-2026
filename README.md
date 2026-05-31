@@ -1,128 +1,145 @@
-# PRONUVE Water Intelligence
+# 💧 PRONUVE Water Intelligence
 
-> Autonomous Multi-Agent Water Quality Monitoring System  
-> Built with Google Agent Development Kit (ADK) | Gemini | Cloud Run
+> Autonomous Multi-Agent Water Monitoring System  
+> Built for Google for Startups AI Agents Challenge 2026 — Track 1: Build
 
-## Overview
-
-PRONUVE is an AI-powered water intelligence platform that monitors municipal park irrigation using **21 specialized agents** orchestrated through Google ADK patterns. The system detects anomalies, predicts consumption, optimizes costs, and ensures regulatory compliance — all autonomously.
-
-## Architecture
-
-```
-pronuve_orchestrator (LlmAgent - gemini-2.5-flash)
-├── full_pipeline (SequentialAgent)
-│   ├── data_pipeline (SequentialAgent)
-│   │   ├── data_ingest_agent
-│   │   ├── data_quality_agent
-│   │   └── weather_agent
-│   ├── parallel_analysis (ParallelAgent)
-│   │   ├── water_analysis_agent
-│   │   ├── anomaly_detection (ParallelAgent - 5 methods)
-│   │   │   ├── zscore_detector
-│   │   │   ├── iqr_detector
-│   │   │   ├── moving_avg_detector
-│   │   │   ├── isolation_forest_detector
-│   │   │   └── cusum_detector
-│   │   ├── prediction_agent (gemini-2.5-pro)
-│   │   ├── ndvi_agent
-│   │   └── leak_detection_agent
-│   ├── optimization_layer (ParallelAgent)
-│   │   ├── cost_optimization_agent
-│   │   ├── irrigation_scheduler_agent
-│   │   └── comparative_agent
-│   ├── governance_pipeline (SequentialAgent)
-│   │   ├── compliance_agent
-│   │   └── sustainability_agent
-│   ├── report_agent
-│   └── alert_agent (Human-in-the-Loop)
-└── monitoring_loop (LoopAgent - 30 iterations)
-```
-
-## Key Features
-
-| Feature | Agent(s) | ADK Pattern |
-|---------|----------|-------------|
-| Data ingestion + validation | data_ingest, data_quality | Sequential |
-| 5-method anomaly consensus | zscore, iqr, ma, iforest, cusum | Parallel |
-| Consumption forecasting | prediction_agent | LlmAgent |
-| Satellite vegetation health | ndvi_agent | LlmAgent |
-| Leak detection | leak_detection_agent | LlmAgent |
-| Cost optimization | cost_optimization_agent | LlmAgent |
-| Smart irrigation scheduling | irrigation_scheduler_agent | LlmAgent |
-| Park benchmarking | comparative_agent | Parallel |
-| Regulatory compliance | compliance_agent | Sequential |
-| Sustainability scoring | sustainability_agent | LlmAgent |
-| Alert with human approval | alert_agent | Human-in-Loop |
-| Continuous monitoring | monitoring_loop | LoopAgent |
-
-## Technology Stack
-
-- **Agent Framework:** Google ADK (SequentialAgent, ParallelAgent, LoopAgent, LlmAgent)
-- **Models:** Gemini 2.5 Flash (speed) + Gemini 2.5 Pro (complex reasoning)
-- **MCP Servers:** BigQuery, Google Earth Engine, Weather API, Gmail
-- **A2A Protocol:** Inter-agent communication with municipal systems
-- **Backend:** FastAPI + Cloud Run (serverless)
-- **Frontend:** Streamlit dashboard (real-time monitoring)
-- **Data:** BigQuery (ASKİ water data + IoT sensors)
-- **Deployment:** Docker → Google Cloud Run
-
-## Quick Start
-
-```bash
-# Clone
-git clone https://github.com/progenx/pronuve-agent.git
-cd pronuve-agent
-
-# Install
-pip install -r requirements.txt
-
-# Configure
-cp .env.example .env
-# Edit .env with your GCP credentials
-
-# Run API
-python main.py
-
-# Run Dashboard
-cd frontend && streamlit run app.py
-```
-
-## Demo
-
-The dashboard shows:
-1. **Overview** — KPIs, consumption trends, anomaly annotations
-2. **Anomalies** — Multi-method consensus detection results
-3. **Predictions** — 30/60/90 day forecasts with confidence bands
-4. **Alerts** — Human-in-the-loop approval workflow
-5. **Agent Log** — Real-time agent activity stream
-6. **Architecture** — Full system topology
-7. **Park Details** — Per-park deep dive
-8. **Sustainability** — SDG alignment and environmental impact
-
-## Real-World Impact
-
-- **Partnership:** ASKİ (Ankara Water Authority) — active data collaboration
-- **Data:** Real consumption data from 35+ municipal parks
-- **Funding:** TÜBİTAK research grant
-- **Academic:** METU Computer Engineering collaboration
-- **Savings:** Projected 174,000 TRY/year water cost reduction across pilot parks
-
-## ADK Patterns Demonstrated
-
-1. **SequentialAgent** — Ordered pipeline stages (data → analysis → report)
-2. **ParallelAgent** — Concurrent anomaly detection (5 methods simultaneously)
-3. **LoopAgent** — Continuous monitoring with configurable intervals
-4. **Human-in-the-Loop** — Critical alert approval before external dispatch
-5. **State Management** — Cross-agent data sharing via ADK state
-6. **MCP Integration** — External data sources via Model Context Protocol
-7. **A2A Protocol** — Inter-system agent communication
-
-## Team
-
-**ProgenX** — Software & AI company (Ankara, Turkey)  
-Partner: PRONUVE Water Technologies
+[![Live Demo](https://img.shields.io/badge/Demo-Live-green)](https://pronuve-dashboard-646472994673.europe-west1.run.app)
+[![Google ADK](https://img.shields.io/badge/Google-ADK-blue)](https://github.com/google/adk-python)
+[![Gemini](https://img.shields.io/badge/Gemini-2.5-purple)](https://ai.google.dev/)
+[![Cloud Run](https://img.shields.io/badge/Cloud-Run-orange)](https://cloud.google.com/run)
 
 ---
 
-*Built for Google for Startups AI Agents Challenge 2026*
+## 🌊 Overview
+
+PRONUVE Water Intelligence is an autonomous multi-agent AI system that monitors municipal park irrigation, detects anomalies, predicts consumption, and ensures regulatory compliance — all powered by **21 specialized AI agents** orchestrated through Google ADK.
+
+**Live Demo:** https://pronuve-dashboard-646472994673.europe-west1.run.app
+
+---
+
+## 🏗️ Architecture
+
+```
+                    ┌─────────────────────────────┐
+                    │    ROOT ORCHESTRATOR         │
+                    │    LlmAgent (Gemini 2.5)     │
+                    └──────────┬──────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
+  ┌───────────┐     ┌──────────────────┐    ┌──────────────┐
+  │  FULL     │     │  MONITORING      │    │  ON-DEMAND   │
+  │  PIPELINE │     │  LOOP (×30)      │    │  QUERIES     │
+  └─────┬─────┘     └──────────────────┘    └──────────────┘
+        │
+   Stage 1: DATA PIPELINE (SequentialAgent)
+        │  → Ingest → Quality → Weather
+        ▼
+   Stage 2: ANALYSIS (ParallelAgent)
+        │  → Water · Anomaly(5×) · Predict · NDVI · Leak
+        ▼
+   Stage 3: OPTIMIZATION (ParallelAgent)
+        │  → Cost · Irrigation · Comparative
+        ▼
+   Stage 4: GOVERNANCE (SequentialAgent)
+        │  → Compliance · Sustainability
+        ▼
+   Stage 5: OUTPUT (Human-in-the-Loop)
+           → Report → Alert [Approve/Reject]
+```
+
+### ADK Patterns Used
+| Pattern | Count | Usage |
+|---------|-------|-------|
+| SequentialAgent | 3 | Pipeline ordering |
+| ParallelAgent | 3 | Concurrent analysis |
+| LoopAgent | 1 | Continuous monitoring |
+| Human-in-the-Loop | 1 | Alert approval |
+| LlmAgent | 21 | All specialized agents |
+
+### MCP Connections
+| Server | Purpose |
+|--------|---------|
+| BigQuery | Consumption + sensor data |
+| Earth Engine | NDVI satellite imagery |
+| Weather API | Forecast + ET₀ |
+| Gmail API | Alert dispatch |
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone
+git clone https://github.com/ardaturak/google-ai-agents-challenge-2026.git
+cd google-ai-agents-challenge-2026
+
+# Setup
+cp .env.example .env  # Add your API keys
+pip install -r requirements.txt
+
+# Run agents
+python main.py
+
+# Run dashboard
+cd frontend
+streamlit run app.py
+```
+
+---
+
+## 📊 Dashboard Pages
+
+| Page | Description |
+|------|-------------|
+| **Dashboard** | KPIs, 24-month trends, anomalies, forecasts, alerts |
+| **Architecture** | Interactive pipeline topology, MCP/A2A, tech stack |
+| **Park Details** | Per-park analysis: consumption vs optimal, NDVI, costs |
+| **Sustainability** | SDG alignment (6,11,13,15), environmental impact |
+| **Agent Demo** | Interactive pipeline simulation — run all 15 agents live |
+
+---
+
+## 📈 Impact (Pilot — 3 Parks, Ankara)
+
+| Metric | Value |
+|--------|-------|
+| Water Saved | 4,080 m³/year |
+| Cost Saved | 174,420 TRY/year |
+| CO₂ Avoided | 1,534 kg/year |
+| Energy Saved | 3,264 kWh/year |
+| SDG Alignment | 6, 11, 13, 15 |
+
+---
+
+## 🤝 Partnership
+
+- **ProgenX** — AI startup (Ankara, Turkey)
+- **PRONUVE** — Academic research project (METU/ODTÜ)
+- **TÜBİTAK** — Funded research
+- **ASKİ** — Data partnership (Ankara Water Authority)
+
+---
+
+## 📋 Data Notice
+
+This submission uses anonymized sample data derived from real municipal park monitoring systems. Full production dataset (100,000+ records) available for judge verification upon request.
+
+Contact: info@progenxacademy.com
+
+---
+
+## 🛠️ Tech Stack
+
+**AI/Agents:** Google ADK · Gemini 2.5 Flash · Gemini 2.5 Pro · MCP · A2A  
+**Cloud:** Cloud Run · BigQuery · Earth Engine · Gmail API · Cloud Storage  
+**Backend:** Python 3.12 · FastAPI · Pydantic · NumPy  
+**Frontend:** Streamlit · Plotly · Pandas  
+**Data:** ASKİ · IoT Sensors (ESP32) · Sentinel-2 · OpenMeteo  
+
+---
+
+## 📄 License
+
+Apache 2.0
