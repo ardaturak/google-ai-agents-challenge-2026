@@ -27,11 +27,11 @@ st.markdown("""
 
 st.markdown("""
 <div class="kpi-row">
-    <div class="kpi-card"><div class="kpi-value">4,080</div><div class="kpi-label">Water Saved (m³/yr)</div><div class="kpi-delta up">Projected</div></div>
+    <div class="kpi-card"><div class="kpi-value">4,080</div><div class="kpi-label">Water Saved (m³/yr)</div><div class="kpi-delta up">3 pilot parks</div></div>
+    <div class="kpi-card"><div class="kpi-value">$4.6K</div><div class="kpi-label">Cost Saved/yr</div><div class="kpi-delta up">174,420 TRY</div></div>
     <div class="kpi-card"><div class="kpi-value">1,534</div><div class="kpi-label">CO₂ Avoided (kg/yr)</div><div class="kpi-delta up">= 70 trees</div></div>
-    <div class="kpi-card"><div class="kpi-value">3,264</div><div class="kpi-label">Energy Saved (kWh/yr)</div><div class="kpi-delta up">Pump reduction</div></div>
-    <div class="kpi-card"><div class="kpi-value">174K</div><div class="kpi-label">Cost Saved (TRY/yr)</div><div class="kpi-delta up">Pilot parks</div></div>
-    <div class="kpi-card"><div class="kpi-value">72</div><div class="kpi-label">Sustainability Score</div><div class="kpi-delta up">↑ improving</div></div>
+    <div class="kpi-card"><div class="kpi-value">$310K</div><div class="kpi-label">City-Wide Potential</div><div class="kpi-delta up">200 parks</div></div>
+    <div class="kpi-card"><div class="kpi-value">$50M+</div><div class="kpi-label">National TAM</div><div class="kpi-delta up">1,400 municipalities</div></div>
     <div class="kpi-card"><div class="kpi-value">4</div><div class="kpi-label">SDGs Addressed</div><div class="kpi-delta up">Direct impact</div></div>
 </div>
 """, unsafe_allow_html=True)

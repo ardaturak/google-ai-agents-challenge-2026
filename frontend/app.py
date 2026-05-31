@@ -47,8 +47,8 @@ st.markdown("""
     <div class="kpi-card"><div class="kpi-value">3</div><div class="kpi-label">Parks Monitored</div><div class="kpi-delta up">Real ASKİ data</div></div>
     <div class="kpi-card"><div class="kpi-value">2</div><div class="kpi-label">Anomalies (30d)</div><div class="kpi-delta up">↓ 1 vs prior</div></div>
     <div class="kpi-card"><div class="kpi-value">78%</div><div class="kpi-label">Avg Efficiency</div><div class="kpi-delta up">↑ 5%</div></div>
-    <div class="kpi-card"><div class="kpi-value">340</div><div class="kpi-label">Water Saved (m³)</div><div class="kpi-delta up">This month</div></div>
-    <div class="kpi-card"><div class="kpi-value">94%</div><div class="kpi-label">Data Quality</div><div class="kpi-delta up">↑ 2%</div></div>
+    <div class="kpi-card"><div class="kpi-value">$4.6K</div><div class="kpi-label">Pilot Savings/yr</div><div class="kpi-delta up">3 parks</div></div>
+    <div class="kpi-card"><div class="kpi-value">$310K</div><div class="kpi-label">City-Wide Potential</div><div class="kpi-delta up">200 parks</div></div>
 </div>
 """, unsafe_allow_html=True)
 
