@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
 from styles import GLOBAL_CSS
+from components import render_sidebar, render_footer
 
 st.set_page_config(page_title="PRONUVE Water Intelligence", page_icon="💧", layout="wide", initial_sidebar_state="expanded")
 st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
@@ -22,57 +23,20 @@ PARKS = {
 }
 
 # === SIDEBAR ===
-with st.sidebar:
-    st.markdown("""
-    <div style='text-align:center; padding:20px 0 10px;'>
-        <div style='font-size:40px; line-height:1;'>💧</div>
-        <h2 style='color:#60a5fa; margin:8px 0 2px; font-size:20px; font-weight:700; letter-spacing:-0.5px;'>PRONUVE</h2>
-        <p style='color:#64748b; font-size:11px; margin:0; letter-spacing:0.5px;'>WATER INTELLIGENCE</p>
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown("---")
-
-    st.markdown("**System Status**")
-    st.markdown("""
-    <div style='font-size:12px; line-height:2.2; color:#cbd5e1;'>
-    🟢 Orchestrator<br>🟢 Data Pipeline (3)<br>🟢 Analysis Layer (5)<br>
-    🟢 Anomaly Detection (5×)<br>🟢 Optimization (3)<br>🟢 Governance (2)<br>
-    🟢 Report Generator<br>🟡 Alert Agent <small style='color:#fbbf24;'>awaiting approval</small>
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown("---")
-
-    st.markdown("**ADK Patterns**")
-    st.markdown("""
-    <div style='font-size:11px; color:#94a3b8; line-height:2;'>
-    <span style='color:#4ade80;'>●</span> SequentialAgent ×3<br>
-    <span style='color:#fbbf24;'>●</span> ParallelAgent ×3<br>
-    <span style='color:#f87171;'>●</span> LoopAgent ×1<br>
-    <span style='color:#d8b4fe;'>●</span> Human-in-Loop ×1
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown("---")
-
-    st.markdown("**MCP Servers**")
-    st.markdown("""
-    <div style='font-size:11px; color:#94a3b8; line-height:2;'>
-    📦 BigQuery<br>🛰️ Earth Engine<br>🌤️ Weather API<br>📧 Gmail API
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown("---")
-
-    st.markdown("""
-    <div style='text-align:center; color:#475569; font-size:10px; line-height:1.8;'>
-    ProgenX + PRONUVE<br>METU • TÜBİTAK<br>
-    <span style='color:#3b82f6;'>Google AI Agents Challenge 2026</span>
-    </div>
-    """, unsafe_allow_html=True)
+render_sidebar()
 
 # === HEADER ===
 st.markdown("""
 <div class="main-header">
     <h1>💧 PRONUVE Water Intelligence</h1>
-    <p>Autonomous Multi-Agent Municipal Water Monitoring • 21 Agents • 5 Detection Methods • Real-Time</p>
+    <p>Autonomous Multi-Agent Municipal Water Monitoring Platform</p>
+    <div class="badge-row">
+        <span class="hbadge">21 AI Agents</span>
+        <span class="hbadge">Google ADK</span>
+        <span class="hbadge">5 Anomaly Methods</span>
+        <span class="hbadge">Real-Time Monitoring</span>
+        <span class="hbadge">Cloud Run</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -92,19 +56,59 @@ st.markdown("""
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Overview", "🔍 Anomalies", "📈 Forecast", "🚨 Alerts", "🤖 Agent Log"])
 
 with tab1:
-    st.markdown('<div class="section-title">Consumption Trends — All Parks (2025)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Consumption Trends — All Parks (2024–2025)</div>', unsafe_allow_html=True)
+
+    MONTHS_FULL = ["Jan '24","Feb '24","Mar '24","Apr '24","May '24","Jun '24",
+                   "Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24",
+                   "Jan '25","Feb '25","Mar '25","Apr '25","May '25","Jun '25",
+                   "Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25"]
+    consumption_extended = {
+        "park-alpha": [1900,1850,2100,2400,2750,3100,3400,3250,2900,2400,2100,1950,
+                       2000,1900,2200,2500,2800,3200,3500,3300,2950,2450,2150,2000],
+        "park-beta":  [1400,1350,1500,1650,1800,2100,2400,2300,1950,1600,1450,1380,
+                       1450,1400,1550,1700,1850,2200,4200,2350,2000,1650,1500,1400],
+        "park-gamma": [950,900,1000,1150,1300,1500,1700,1600,1400,1150,1000,950,
+                       980,930,1050,1200,1350,1550,1750,1650,1450,1200,1050,980],
+    }
+    colors = {"park-alpha": "#3b82f6", "park-beta": "#f97316", "park-gamma": "#10b981"}
+    fill_colors = {"park-alpha": "rgba(59,130,246,0.08)", "park-beta": "rgba(249,115,22,0.08)", "park-gamma": "rgba(16,185,129,0.08)"}
+
     fig = go.Figure()
-    colors = {"park-alpha": "#3b82f6", "park-beta": "#ef4444", "park-gamma": "#22c55e"}
     for pid, d in PARKS.items():
-        fig.add_trace(go.Scatter(x=MONTHS, y=d["consumption"], name=d["name"],
-                                 mode="lines+markers", line=dict(width=2.5, color=colors[pid]), marker=dict(size=4)))
-    fig.add_annotation(x="Jul", y=4200, text="⚠️ ANOMALY<br><b>4,200 m³</b> (5/5)",
-                       showarrow=True, arrowhead=2, font=dict(color="#ef4444", size=10),
-                       bordercolor="#ef4444", borderwidth=1, bgcolor="#1f0a0a", borderpad=5)
-    fig.update_layout(height=370, template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)",
-                      plot_bgcolor="rgba(15,23,42,0.5)", yaxis=dict(title="m³", gridcolor="#1e293b"),
-                      xaxis=dict(gridcolor="#1e293b"), legend=dict(orientation="h", y=-0.12),
-                      margin=dict(t=15, b=50, l=55, r=15), font=dict(family="Inter"))
+        fig.add_trace(go.Scatter(
+            x=MONTHS_FULL, y=consumption_extended[pid], name=d["name"],
+            mode="lines+markers",
+            line=dict(width=2.5, color=colors[pid], shape="spline"),
+            marker=dict(size=3, color=colors[pid]),
+            fill="tozeroy", fillcolor=fill_colors[pid],
+            hovertemplate="<b>%{x}</b><br>%{y:,.0f} m³<extra>" + d["name"] + "</extra>"
+        ))
+
+    fig.add_vrect(x0="Jun '25", x1="Aug '25", fillcolor="rgba(239,68,68,0.05)",
+                  line_width=0, annotation_text="Peak Season", annotation_position="top left",
+                  annotation=dict(font_size=10, font_color="#94a3b8"))
+
+    fig.add_annotation(x="Jul '25", y=4200, text="<b>ANOMALY DETECTED</b><br>4,200 m³ • Consensus 5/5",
+                       showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=1.5, arrowcolor="#ef4444",
+                       font=dict(color="#fca5a5", size=10, family="Inter"),
+                       bordercolor="#7f1d1d", borderwidth=1.5, bgcolor="rgba(31,10,10,0.95)", borderpad=8,
+                       ax=40, ay=-50)
+
+    fig.update_layout(
+        height=420, template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(10,14,26,0.6)",
+        yaxis=dict(title="Consumption (m³)", gridcolor="rgba(30,48,72,0.5)", gridwidth=1,
+                   tickformat=",", zeroline=False, title_font=dict(size=11, color="#64748b")),
+        xaxis=dict(gridcolor="rgba(30,48,72,0.3)", gridwidth=1, tickangle=-45,
+                   tickfont=dict(size=9), dtick=2),
+        legend=dict(orientation="h", y=-0.18, x=0.5, xanchor="center",
+                    bgcolor="rgba(17,24,39,0.8)", bordercolor="#1e3048", borderwidth=1,
+                    font=dict(size=11)),
+        margin=dict(t=20, b=70, l=60, r=20),
+        font=dict(family="Inter"),
+        hovermode="x unified",
+        hoverlabel=dict(bgcolor="#1e293b", bordercolor="#3b82f6", font_size=12, font_family="Inter")
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown('<div class="section-title">Sensor & Vegetation Status</div>', unsafe_allow_html=True)
@@ -198,7 +202,9 @@ with tab5:
         {"⏱️": "10:45:15", "Agent": "Compliance", "Action": "Score: 87%", "Result": "✅"},
         {"⏱️": "10:45:15", "Agent": "Sustainability", "Action": "SDG scores: 6→82, 11→76", "Result": "✅"},
         {"⏱️": "10:45:16", "Agent": "Report", "Action": "Monthly report generated", "Result": "✅"},
-        {"⏱️": "10:45:17", "Agent": "Alert", "Action": "CRITICAL queued — awaiting approval", "Result": "🔴"},
+        {"⏱️": "10:45:17", "Agent": "Alert", "Action": "CRITICAL alert sent — human-in-the-loop approved", "Result": "🟢"},
     ])
     st.dataframe(log, hide_index=True, use_container_width=True, height=400)
     st.caption("Pipeline total: **15 agents** executed in **15 seconds** • SequentialAgent → ParallelAgent → LoopAgent")
+
+render_footer()

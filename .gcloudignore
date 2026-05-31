@@ -1,0 +1,15 @@
+.git
+.cursor
+__pycache__
+*.pyc
+data/
+docs/
+tests/
+agents/
+tools/
+mcp/
+a2a/
+main.py
+.env.example
+README.md
+requirements.txt
