@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir streamlit==1.35.0 plotly==5.22.0 pandas==2.2.2
+RUN pip install --no-cache-dir streamlit==1.35.0 plotly==5.22.0 pandas==2.2.2 google-generativeai==0.8.3
 
 COPY frontend/ ./frontend/
 
