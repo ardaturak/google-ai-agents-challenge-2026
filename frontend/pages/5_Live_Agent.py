@@ -287,7 +287,7 @@ with tab2:
             <div style="font-size:12px; font-weight:700; color:#f1f5f9;">{selected}</div>
             <div style="font-size:10px; color:#94a3b8; margin-top:6px; line-height:1.6;">{agent_desc}</div>
             <div style="font-size:9px; color:#64748b; margin-top:10px; padding-top:8px; border-top:1px solid #1e3048;">
-                Model: gemini-2.0-flash-lite • Temp: 0.3 • Max tokens: 1024
+                Model: gemini-2.5-flash • Temp: 0.3 • Max tokens: 1024
             </div>
         </div>
         """, unsafe_allow_html=True)
