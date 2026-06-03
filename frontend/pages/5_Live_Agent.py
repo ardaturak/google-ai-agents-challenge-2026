@@ -17,10 +17,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from styles import GLOBAL_CSS
 from components import render_sidebar, render_footer
-sys.path.insert(0, str(Path(__file__).parent.parent / "agent_core"))
+
+agent_core_path = str(Path(__file__).parent.parent / "agent_core")
+if agent_core_path not in sys.path:
+    sys.path.insert(0, agent_core_path)
 from config import RateLimiter
 from orchestrator import (
-    run_full_pipeline, run_single_agent, PARK_DATA, WEATHER_DATA, AgentResult
+    run_full_pipeline, run_single_agent, run_report_agent,
+    PARK_DATA, WEATHER_DATA, AgentResult
 )
 
 st.set_page_config(
@@ -192,7 +196,6 @@ with tab1:
                             elif "Sustainability" in agent_name:
                                 result = run_single_agent(api_key, "sustainability", pipeline_query)
                             else:
-                                from orchestrator import run_report_agent
                                 full_ctx = "\n".join([f"[{r.agent_name}]: {r.output[:200]}" for r in all_results])
                                 result = run_report_agent(api_key, pipeline_query, full_ctx)
 

@@ -117,21 +117,43 @@ def _call_agent(api_key: str, agent_name: str, system_instruction: str,
             f"[SYSTEM]\n{system_instruction}\n\n[USER QUERY]\n{user_prompt}"
         )
         duration = int((time.time() - start) * 1000)
-        tokens = response.usage_metadata.total_token_count if hasattr(response, 'usage_metadata') and response.usage_metadata else 0
+        tokens = 0
+        if hasattr(response, 'usage_metadata') and response.usage_metadata:
+            tokens = getattr(response.usage_metadata, 'total_token_count', 0) or 0
+
+        output_text = ""
+        if hasattr(response, 'text') and response.text:
+            output_text = response.text
+        elif hasattr(response, 'candidates') and response.candidates:
+            parts = response.candidates[0].content.parts
+            output_text = "".join(p.text for p in parts if hasattr(p, 'text'))
+
+        if not output_text:
+            output_text = "Agent completed but returned empty response."
+
         return AgentResult(
             agent_name=agent_name,
             status="success",
-            output=response.text,
+            output=output_text,
             duration_ms=duration,
             tokens_used=tokens,
             model=model_name,
         )
     except Exception as e:
         duration = int((time.time() - start) * 1000)
+        error_msg = str(e)
+        if "API_KEY_INVALID" in error_msg or "PERMISSION_DENIED" in error_msg:
+            output = "API key is invalid or has insufficient permissions. Please check your Gemini API key."
+        elif "RESOURCE_EXHAUSTED" in error_msg or "quota" in error_msg.lower():
+            output = "API quota exceeded. Please wait a moment and try again."
+        elif "SAFETY" in error_msg.upper():
+            output = "Response blocked by safety filters. Try rephrasing your query."
+        else:
+            output = f"Agent error: {error_msg[:300]}"
         return AgentResult(
             agent_name=agent_name,
             status="error",
-            output=f"Agent error: {str(e)[:200]}",
+            output=output,
             duration_ms=duration,
             model=model_name,
         )

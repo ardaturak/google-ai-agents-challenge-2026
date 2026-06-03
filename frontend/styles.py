@@ -158,6 +158,8 @@ div[data-testid="stToolbar"] { display: none !important; }
 
 div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
 
+.park-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+
 /* Override Streamlit default widget colors */
 .stSelectbox [data-baseweb="select"] { background: var(--bg-card) !important; border-color: var(--border) !important; }
 .stSelectbox [data-baseweb="select"]:hover { border-color: var(--border-hover) !important; }
@@ -177,5 +179,25 @@ div[data-testid="stStatus"] { background: var(--bg-card) !important; border: 1px
     text-align: center; margin-top: 40px; padding: 20px;
     border-top: 1px solid var(--border); color: var(--text-muted); font-size: 11px;
 }
+
+/* Text Input & Radio styling */
+div[data-testid="stTextInput"] input { background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 10px !important; color: var(--text-primary) !important; }
+div[data-testid="stTextInput"] input:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 2px rgba(59,130,246,0.15) !important; }
+div[data-testid="stRadio"] label { color: var(--text-secondary) !important; font-size: 12px !important; }
+div[data-testid="stRadio"] [data-baseweb="radio"] { margin-bottom: 4px; }
+
+/* Progress bar */
+div[data-testid="stProgress"] > div > div { background: var(--accent) !important; border-radius: 6px !important; }
+div[data-testid="stProgress"] { background: var(--bg-secondary) !important; border-radius: 6px !important; }
+
+/* Caption & info boxes */
+div[data-testid="stCaptionContainer"] { color: var(--text-muted) !important; }
+div.stAlert { background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
 </style>
 """
