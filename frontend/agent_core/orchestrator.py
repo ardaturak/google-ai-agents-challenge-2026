@@ -82,7 +82,7 @@ class AgentResult:
     reasoning: str = ""
     duration_ms: int = 0
     tokens_used: int = 0
-    model: str = "gemini-2.0-flash"
+    model: str = "gemini-2.0-flash-lite"
 
 
 @dataclass
@@ -95,7 +95,7 @@ class PipelineState:
     recommendations: list = field(default_factory=list)
 
 
-def _get_model(api_key: str, model_name: str = "gemini-2.0-flash"):
+def _get_model(api_key: str, model_name: str = "gemini-2.0-flash-lite"):
     """Initialize Gemini model with API key."""
     genai.configure(api_key=api_key)
     return genai.GenerativeModel(
@@ -108,7 +108,7 @@ def _get_model(api_key: str, model_name: str = "gemini-2.0-flash"):
 
 
 def _call_agent(api_key: str, agent_name: str, system_instruction: str,
-                user_prompt: str, model_name: str = "gemini-2.0-flash") -> AgentResult:
+                user_prompt: str, model_name: str = "gemini-2.0-flash-lite") -> AgentResult:
     """Execute a single agent call to Gemini."""
     start = time.time()
     try:
@@ -240,7 +240,7 @@ WEATHER: {json.dumps(WEATHER_DATA, indent=1)}
 Provide: predicted next 3 months consumption, confidence interval, MAPE estimate.
 Be concise but data-driven (max 200 words)."""
 
-    return _call_agent(api_key, "Prediction Agent", system, user_query, "gemini-2.0-flash")
+    return _call_agent(api_key, "Prediction Agent", system, user_query, "gemini-2.0-flash-lite")
 
 
 def run_ndvi_agent(api_key: str, user_query: str) -> AgentResult:
