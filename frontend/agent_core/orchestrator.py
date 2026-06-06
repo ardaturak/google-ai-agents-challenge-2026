@@ -30,10 +30,14 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 try:
-    import google.generativeai as genai
+    from google import genai
     HAS_GENAI = True
 except ImportError:
-    HAS_GENAI = False
+    try:
+        import google.generativeai as genai_legacy
+        HAS_GENAI = True
+    except ImportError:
+        HAS_GENAI = False
 
 
 PARK_DATA = {
@@ -95,26 +99,24 @@ class PipelineState:
     recommendations: list = field(default_factory=list)
 
 
-def _get_model(api_key: str, model_name: str = "gemini-2.5-flash"):
-    """Initialize Gemini model with API key."""
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(
-        model_name,
-        generation_config=genai.GenerationConfig(
-            temperature=0.3,
-            max_output_tokens=1024,
-        ),
-    )
+def _get_client(api_key: str):
+    """Initialize Google GenAI client."""
+    return genai.Client(api_key=api_key)
 
 
 def _call_agent(api_key: str, agent_name: str, system_instruction: str,
                 user_prompt: str, model_name: str = "gemini-2.5-flash") -> AgentResult:
-    """Execute a single agent call to Gemini."""
+    """Execute a single agent call to Gemini via the new google-genai SDK."""
     start = time.time()
     try:
-        model = _get_model(api_key, model_name)
-        response = model.generate_content(
-            f"[SYSTEM]\n{system_instruction}\n\n[USER QUERY]\n{user_prompt}"
+        client = _get_client(api_key)
+        response = client.models.generate_content(
+            model=model_name,
+            contents=f"[SYSTEM]\n{system_instruction}\n\n[USER QUERY]\n{user_prompt}",
+            config={
+                "temperature": 0.3,
+                "max_output_tokens": 1024,
+            },
         )
         duration = int((time.time() - start) * 1000)
         tokens = 0

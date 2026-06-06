@@ -98,6 +98,7 @@ streamlit run app.py
 | **Park Details** | Per-park analysis: consumption vs optimal, NDVI, costs |
 | **Sustainability** | SDG alignment (6,11,13,15), environmental impact |
 | **Agent Demo** | Interactive pipeline simulation — run all 15 agents live |
+| **Live Agent** | **Real Gemini API** — 11 agents execute live with context chaining |
 
 ---
 

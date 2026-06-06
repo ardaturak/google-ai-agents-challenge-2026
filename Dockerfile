@@ -6,7 +6,7 @@ RUN pip install --no-cache-dir \
     streamlit==1.35.0 \
     plotly==5.22.0 \
     pandas==2.2.2 \
-    google-generativeai==0.8.3
+    google-genai
 
 COPY frontend/ ./frontend/
 
